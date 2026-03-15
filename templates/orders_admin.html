@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Orders - FastAPI Shop{% endblock %}
+
+{% block content %}
+<h2>Orders (Admin)</h2>
+
+{% if not orders %}
+    <p>No orders yet.</p>
+{% else %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Created</th>
+            <th>Customer</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.created_at }}</td>
+                <td>{{ order.customer_name }}</td>
+                <td>{{ order.status }}</td>
+                <td>
+                    <a href="/orders/{{ order.id }}" class="btn-link">View</a>
+                    {% if order.status != "SHIPPED" %}
+                        <form action="/orders/{{ order.id }}/ship" method="post" style="display:inline">
+                            <button type="submit" class="btn-small">Mark shipped</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}
+

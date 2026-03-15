@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Products - FastAPI Shop{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-text">
+        <h2>Developer‑friendly demo store</h2>
+        <p>Browse a tiny catalog, place a test order, and see how FastAPI + SQLite can power a simple e‑commerce flow end‑to‑end.</p>
+        <ul class="hero-bullets">
+            <li>Real FastAPI endpoints behind every action</li>
+            <li>Orders and items stored in SQLite</li>
+            <li>Instant status updates from Pending to Shipped</li>
+        </ul>
+    </div>
+    <div class="hero-panel">
+        <p class="hero-label">How it works</p>
+        <ol>
+            <li>Select quantities for any in‑stock products.</li>
+            <li>Fill in your (demo) shipping details.</li>
+            <li>Place the order and watch it appear in the admin view.</li>
+        </ol>
+    </div>
+</section>
+
+{% if not products %}
+    <div class="card empty-state">
+        <h3>No products yet</h3>
+        <p>Use the API at <code>/docs</code> to create products, then refresh this page.</p>
+    </div>
+{% else %}
+    <form action="/orders/place" method="post" class="card">
+        <h3 class="section-title">Catalog</h3>
+        <div class="product-grid">
+            {% for product in products %}
+                <article class="product-card">
+                    <header>
+                        <h4>{{ product.name }}</h4>
+                        <p class="product-price">${{ '%.2f'|format(product.price) }}</p>
+                    </header>
+                    <p class="product-description">{{ product.description or "No description provided." }}</p>
+                    <p class="product-stock">
+                        {% if product.stock > 0 %}
+                            In stock: <strong>{{ product.stock }}</strong>
+                        {% else %}
+                            <span class="badge badge-muted">Out of stock</span>
+                        {% endif %}
+                    </p>
+                    {% if product.stock > 0 %}
+                        <div class="product-qty">
+                            <label>
+                                Qty
+                                <input type="hidden" name="product_ids" value="{{ product.id }}">
+                                <input type="number" name="quantities" min="0" max="{{ product.stock }}" value="0">
+                            </label>
+                        </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+
+        <h3 class="section-title">Shipping details</h3>
+        <div class="grid">
+            <label>
+                Name
+                <input type="text" name="customer_name" placeholder="Ada Lovelace" required>
+            </label>
+            <label>
+                Email
+                <input type="email" name="customer_email" placeholder="you@example.com" required>
+            </label>
+        </div>
+        <label>
+            Shipping address
+            <textarea name="shipping_address" rows="3" placeholder="123 FastAPI Lane, Server City" required></textarea>
+        </label>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Place demo order</button>
+            <span class="muted-note">No real orders or payments are processed.</span>
+        </div>
+    </form>
+{% endif %}
+{% endblock %}
+

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Order #{{ order.id }} - FastAPI Shop{% endblock %}
+
+{% block content %}
+<h2>Thank you for your order!</h2>
+
+<div class="card">
+    <p><strong>Order ID:</strong> {{ order.id }}</p>
+    <p><strong>Status:</strong> {{ order.status }}</p>
+    <p><strong>Placed at:</strong> {{ order.created_at }}</p>
+
+    <h3>Customer</h3>
+    <p>{{ order.customer_name }}<br>{{ order.customer_email }}</p>
+
+    <h3>Shipping address</h3>
+    <p>{{ order.shipping_address }}</p>
+
+    <h3>Items</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in order.items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ '%.2f'|format(item.unit_price) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<a href="/products" class="btn-secondary">Back to products</a>
+{% endblock %}
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Shop{% endblock %}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="background-glow"></div>
+<header class="site-header">
+    <div class="container header-inner">
+        <div class="logo-wrap">
+            <div class="logo-mark">FS</div>
+            <div>
+                <h1 class="logo"><a href="/products">FastAPI Shop</a></h1>
+                <p class="logo-tagline">Tiny demo store powered by FastAPI &amp; SQLite</p>
+            </div>
+        </div>
+        <nav class="nav">
+            <a href="/products">Store</a>
+            <a href="/orders/admin/list">Orders</a>
+            <a href="/docs">API Docs</a>
+        </nav>
+    </div>
+</header>
+<main class="page-shell">
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <p>&copy; {{ 2026 }} FastAPI Shop · Built with FastAPI</p>
+    </div>
+</footer>
+</body>
+</html>
+
