@@ -1,12 +1,12 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from db import get_db
-from models import Product
+from models import Product, OrderItem
 from schemas import ProductCreate, ProductRead
 
 
@@ -51,4 +51,21 @@ def create_product(product_in: ProductCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(product)
     return product
+
+
+@router.delete("/api/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found.")
+
+    in_use = db.query(OrderItem).filter(OrderItem.product_id == product_id).first()
+    if in_use:
+        raise HTTPException(
+            status_code=400,
+            detail="Product cannot be deleted because it is used in existing orders.",
+        )
+
+    db.delete(product)
+    db.commit()
 
